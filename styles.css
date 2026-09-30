@@ -291,7 +291,8 @@ dialog .method { margin-top:16px; }
 .timeline-heading { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
 .timeline-heading h3 { font-size:11px; font-weight:400; margin:0; }
 #timeline-period { color:var(--muted); font-size:8px; text-align:right; }
-.legend a { margin-left:auto; font-size:8px; color:var(--muted); }
+.legend a { font-size:7px; color:var(--muted); }
+.legend>.project-links { margin-left:auto; gap:10px; }
 .track { height:12px; }
 .method-page { height:auto; display:block; max-width:720px; margin:0 auto; padding:32px 24px; }
 .method-page h1 { font-size:20px; font-weight:400; margin:24px 0; }
@@ -309,5 +310,6 @@ dialog .method { margin-top:16px; }
  .legend { margin-top:4px; gap:3px 8px; }
  .legend>span,.legend a { font-size:6px; line-height:1.2; }
  .legend>span { gap:3px; }
+ .legend>.project-links { gap:8px; }
  .swatch { width:4px; height:4px; }
 }
