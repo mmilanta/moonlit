@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#100f0f">
+  <meta name="description" content="A lunar calendar for astrophotography. Plan moon-free evening and morning hours anywhere in the world.">
+  <title>Moonlit / lunar calendar</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23100f0f'/%3E%3Cpath d='M27 8a13 13 0 1 0 5 21A13 13 0 0 1 27 8' fill='%234385be'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="vendor/leaflet.css">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="vendor/astronomy.browser.min.js"></script>
+  <script defer src="astronomy.js"></script>
+  <script defer src="data/capitals.js"></script>
+  <script defer src="vendor/leaflet.js"></script>
+  <script defer src="vendor/tz-lookup.js"></script>
+  <script defer src="location-picker.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="page">
+    <main>
+      <section class="toolbar" aria-label="Planning controls">
+        <button id="edit-location" class="text-button location-trigger" aria-label="Change observing location">Zurich, Switzerland</button>
+        <div class="date-control"><label for="date" class="sr-only">Night beginning</label><input type="date" id="date" min="1900-01-01" max="2100-12-30"></div>
+        <button id="today" class="outline-button">Tonight</button>
+      </section>
+      <p id="error" class="error" role="alert" hidden></p>
+      <div class="planning-layout">
+        <section class="calendar-section" aria-labelledby="calendar-heading">
+          <div class="calendar-heading"><h1 id="calendar-heading">Moon-free hours</h1><div class="month-nav"><button id="previous-month" class="icon-button" aria-label="Previous month">←</button><span id="month-label"></span><button id="next-month" class="icon-button" aria-label="Next month">→</button></div></div>
+
+          <div class="weekdays" aria-hidden="true"><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span></div>
+          <div id="calendar" class="calendar" aria-label="Choose an observing night"></div>
+
+        </section>
+        <section class="night-card" aria-labelledby="night-heading" aria-live="polite">
+          <p id="night-date" class="sr-only">Selected night</p>
+          <h2 id="night-heading">Calculating…</h2>
+          <div class="phase-summary"><div id="moon-graphic" class="moon-graphic" aria-hidden="true"></div><div><h3 id="moon-phase">—</h3><p id="moon-illumination" class="muted">—</p></div></div>
+          <div class="window-summary"><p class="small-label">Moon-free darkness</p><p id="dark-duration" class="big-duration">—</p><div id="window-times" class="window-times"></div><p id="window-explanation" class="muted"></p></div>
+          <figure class="night-timeline" aria-labelledby="timeline-heading">
+            <figcaption class="timeline-heading"><h3 id="timeline-heading">Night timeline</h3><span id="timeline-period">Local noon to noon</span></figcaption>
+            <div id="timeline" class="timeline" role="img" aria-label="Night timeline"></div>
+            <div class="legend"><span><i class="swatch sunlight"></i>Daylight</span><span><i class="swatch twilight"></i>Twilight</span><span><i class="swatch moonlight"></i>Moon up</span><span><i class="swatch clear"></i>Moon-free</span><a href="method.html">Sources</a></div>
+          </figure>
+        </section>
+      </div>
+
+    </main>
+  </div>
+  <dialog id="location-dialog" aria-labelledby="location-heading">
+    <div class="dialog-heading"><h2 id="location-heading">Location</h2><button type="button" id="close-location" class="icon-button" aria-label="Close location picker">×</button></div>
+    <form id="location-form">
+      <div id="city-picker" class="city-picker">
+        <label for="city-search" class="sr-only">City</label>
+        <input id="city-search" class="city-search" type="search" placeholder="Choose a city…" aria-label="Choose a city" aria-controls="city-results" aria-describedby="city-search-status" autocomplete="off" autofocus>
+        <p id="city-search-status" class="sr-only" role="status"></p>
+        <div id="city-results" class="city-results" role="group" aria-label="Cities" hidden></div>
+      </div>
+      <div id="location-map" class="location-map" role="region" aria-label="Location map. Click to select a point, or enter coordinates below." data-tile-url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"></div>
+      <p id="map-status" class="input-hint" role="status" hidden>Map tiles unavailable. You can still enter coordinates.</p>
+      <div class="coordinate-fields"><div><label for="latitude">Latitude</label><input id="latitude" type="number" min="-90" max="90" step="any" required></div><div><label for="longitude">Longitude</label><input id="longitude" type="number" min="-180" max="180" step="any" required></div></div>
+      <label for="timezone" class="timezone-label">Time zone <button id="auto-timezone" class="text-button" type="button" aria-label="Infer time zone from coordinates">Auto</button></label>
+      <input id="timezone" placeholder="Europe/Zurich" required list="timezones" aria-describedby="timezone-status">
+      <span id="timezone-status" class="sr-only" role="status"></span>
+      <datalist id="timezones"><option value="Europe/Zurich"><option value="Europe/London"><option value="America/New_York"><option value="America/Los_Angeles"><option value="Australia/Sydney"><option value="Asia/Tokyo"><option value="UTC"></datalist>
+      <details id="location-options" class="location-options"><summary>Elevation <span>optional</span></summary><label for="elevation" class="sr-only">Elevation above sea level in metres</label><input id="elevation" type="number" min="-500" max="10000" step="any" required aria-label="Elevation above sea level in metres"></details>
+      <p id="location-error" class="error" role="alert" hidden></p>
+      <button class="primary-button" type="submit">Use location</button>
+    </form>
+  </dialog>
+  <noscript><p class="noscript">Enable JavaScript to calculate Sun and Moon times. Calculations run in your browser.</p></noscript>
+</body>
+</html>

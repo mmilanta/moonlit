@@ -1,0 +1,10 @@
+{
+  "name": "moonlit-calendar",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A small static lunar calendar for astrophotography",
+  "scripts": {
+    "test": "node --test tests/*.test.cjs",
+    "dev": "python3 -m http.server 5186 --bind 127.0.0.1"
+  }
+}

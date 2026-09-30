@@ -1,0 +1,9 @@
+.agents/
+.aws/
+.codex/
+.env
+.env.*
+node_modules/
+*.log
+.DS_Store
+previews/
