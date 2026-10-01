@@ -12,7 +12,7 @@ npm run dev
 
 Then visit [localhost:5186](http://localhost:5186). No installation, build step, backend, or API key is required. Astronomy, city search, and time-zone lookup work offline; the small OpenStreetMap preview needs an internet connection. To publish, upload `index.html`, `method.html`, `styles.css`, `app.js`, `astronomy.js`, `location-picker.js`, `assets/`, `data/`, and `vendor/` to any static host.
 
-Zurich is the default. The location picker accepts a city, manual latitude/longitude, or a point clicked on the map. Its marker, coordinates, and time zone stay in sync before you press **Use location**. The marker can also be dragged; keyboard users can pan the map and press Enter to select its centre. Elevation is optional; arbitrary points initially use sea level unless you enter an elevation. Closing the picker discards changes.
+Zurich is the default. The location picker accepts a city, manual latitude/longitude, or a point clicked on the map. Its marker, coordinates, and time zone stay in sync before you press **Use location**. The marker can also be dragged; keyboard users can pan the map and press Enter to select its centre. City elevations are used automatically; custom coordinates use sea level. Closing the picker discards changes.
 
 City time zones come from the bundled city catalogue. Coordinate time zones are inferred locally with [@photostructure/tz-lookup 11.7.0](https://github.com/photostructure/tz-lookup), which uses compressed geographic boundaries and can be approximate near borders or coastlines. You can edit the time zone; that override stays in place while moving the point until **Auto** restores inference. The selected location and override are remembered locally when browser storage is available.
 
@@ -25,6 +25,8 @@ Each date labels the night beginning that afternoon: **local noon to the next lo
 The main metric is **moon-free astronomical darkness**: the Sun's geometric center is at or below −18° and the Moon's apparent upper limb is below the horizon. The smaller sunset comparison includes twilight and therefore can be longer. All distinct overlapping intervals are preserved; elapsed durations account for 23- and 25-hour daylight-saving periods. Calendar hours are computed per night, rather than estimated from the phase or a repeating lunar cycle.
 
 Continuous windows stay intact across midnight. **Evening** (↘, amber) starts at astronomical dusk and runs until moonrise. **Morning** (↗, teal) starts after moonset and runs toward dawn, even when moonset happens before midnight. Separate windows retain their moonlit gap. **All night** (•, olive) means all astronomical darkness is moon-free. The calendar and selected-night summary use the same classification; durations use actual elapsed time, including daylight-saving changes.
+
+The calendar switches to the selected week on short screens so the grid and timeline fit without page scrolling. The arrows then move by week; the date input can jump to any night. Nights with no moon-free hours explain whether the Sun prevents astronomical darkness or the Moon stays above the horizon throughout it.
 
 Lunar illumination is evaluated around the intervening local midnight. Moon graphics show phase with north up, rather than the Moon's current orientation in the observer's sky. Rise/set times and duration values are rounded independently to the nearest minute, so the difference between displayed endpoints can differ from the displayed duration by a minute.
 

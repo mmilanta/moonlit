@@ -12,8 +12,8 @@ The browser receives only the small filtered catalogue. No GeoNames API account,
 - Explicit additions cover Cape Town and Bloemfontein; Sri Jayewardenepura Kotte; Jerusalem and East Jerusalem; Laayoune; and the government seats Cotonou, La Paz, Brades, Putrajaya, The Hague, Lobamba, and Ramallah.
 - `PPLG` records are not included indiscriminately because that field also contained unrelated local places. The added government seats are individually identified in the generator.
 - Display names are normalized for Washington, D.C., Palestine, Vatican City, and the Netherlands. Original/ASCII names remain searchable. Ngerulmud is taken from the city record rather than the older country-info capital label, Melekeok.
-- When GeoNames has a reported elevation it is used; otherwise its DEM elevation is used. The unavailable DEM sentinel `-9999` is never used as an actual elevation. Suva and Monaco use a zero-metre fallback, labeled as estimated in the UI.
-- City-centre coordinates and elevation estimates are a starting point; the observing-location editor accepts actual site coordinates, elevation, and time zone.
+- When GeoNames has a reported elevation it is used; otherwise its DEM elevation is used. The unavailable DEM sentinel `-9999` is never used as an actual elevation. Suva and Monaco use a zero-metre fallback.
+- City-centre elevations are used automatically. The observing-location editor accepts actual site coordinates and a time zone; custom coordinates use a zero-metre fallback.
 
 ## Cross-checks for capital changes and multiple capitals
 

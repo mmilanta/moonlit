@@ -8,14 +8,14 @@
   <title>Moonlit / lunar calendar</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23100f0f'/%3E%3Cpath d='M27 8a13 13 0 1 0 5 21A13 13 0 0 1 27 8' fill='%234385be'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="vendor/leaflet.css">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20261001">
   <script defer src="vendor/astronomy.browser.min.js"></script>
   <script defer src="astronomy.js"></script>
   <script defer src="data/capitals.js"></script>
   <script defer src="vendor/leaflet.js"></script>
   <script defer src="vendor/tz-lookup.js"></script>
-  <script defer src="location-picker.js"></script>
-  <script defer src="app.js"></script>
+  <script defer src="location-picker.js?v=20261001"></script>
+  <script defer src="app.js?v=20261001"></script>
 </head>
 <body>
   <div class="page">
@@ -38,7 +38,7 @@
           <p id="night-date" class="sr-only">Selected night</p>
           <h2 id="night-heading">Calculating…</h2>
           <div class="phase-summary"><div id="moon-graphic" class="moon-graphic" aria-hidden="true"></div><div><h3 id="moon-phase">—</h3><p id="moon-illumination" class="muted">—</p></div></div>
-          <div class="window-summary"><p class="small-label">Moon-free darkness</p><p id="dark-duration" class="big-duration">—</p><div id="window-times" class="window-times"></div><p id="window-explanation" class="muted"></p></div>
+          <div class="window-summary"><p class="small-label">Moon-free darkness</p><p id="dark-duration" class="big-duration">—</p><div id="window-times" class="window-times"></div></div>
           <figure class="night-timeline" aria-labelledby="timeline-heading">
             <figcaption class="timeline-heading"><h3 id="timeline-heading">Night timeline</h3><span id="timeline-period">Local noon to noon</span></figcaption>
             <div id="timeline" class="timeline" role="img" aria-label="Night timeline"></div>
@@ -65,7 +65,6 @@
       <input id="timezone" placeholder="Europe/Zurich" required list="timezones" aria-describedby="timezone-status">
       <span id="timezone-status" class="sr-only" role="status"></span>
       <datalist id="timezones"><option value="Europe/Zurich"><option value="Europe/London"><option value="America/New_York"><option value="America/Los_Angeles"><option value="Australia/Sydney"><option value="Asia/Tokyo"><option value="UTC"></datalist>
-      <details id="location-options" class="location-options"><summary>Elevation <span>optional</span></summary><label for="elevation" class="sr-only">Elevation above sea level in metres</label><input id="elevation" type="number" min="-500" max="10000" step="any" required aria-label="Elevation above sea level in metres"></details>
       <p id="location-error" class="error" role="alert" hidden></p>
       <button class="primary-button" type="submit">Use location</button>
     </form>

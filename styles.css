@@ -200,7 +200,6 @@ main { height:100%; display:flex; flex-direction:column; }
 .calendar-day { min-height:0; justify-content:center; gap:6px; }
 .night-card { align-self:start; }
 .night-card h2 { font-size:19px; margin:0 0 24px; }
-.window-summary>.muted { display:none; }
 .month-nav .icon-button { color:var(--accent); }
 .observing-window.evening .window-period { color:var(--evening); }
 .observing-window.morning .window-period { color:var(--morning); }
@@ -216,7 +215,7 @@ dialog .method { margin-top:16px; }
  .location-trigger { font-size:10px; min-width:0; }
  .date-control input { width:117px; font-size:10px; }
  .outline-button { font-size:10px; padding:6px 0; }
- .planning-layout { display:flex; flex:0 1 550px; height:550px; flex-direction:column; gap:18px; justify-content:flex-start; }
+ .planning-layout { display:flex; flex:0 1 580px; height:580px; flex-direction:column; gap:18px; justify-content:flex-start; }
  .calendar-section { flex:0 1 390px; height:auto; max-height:390px; }
  .calendar-heading { flex-direction:row; align-items:center; gap:8px; margin-bottom:14px; }
  .calendar-heading h1 { font-size:15px; }
@@ -227,7 +226,7 @@ dialog .method { margin-top:16px; }
  .calendar-day { padding:4px; gap:4px; }
  .day-period { font-size:8px; gap:2px; }
  .day-periods { min-height:22px; }
- .night-card { align-self:stretch; flex:none; height:200px; padding:10px 0 0; display:grid; grid-template-columns:minmax(0,1fr) auto; grid-template-rows:28px 34px 28px minmax(0,1fr); gap:6px 12px; }
+ .night-card { align-self:stretch; flex:none; height:216px; padding:10px 0 0; display:grid; grid-template-columns:minmax(0,1fr) auto; grid-template-rows:28px 34px 44px minmax(0,1fr); gap:6px 12px; }
  .night-card h2 { grid-column:1; grid-row:1; font-size:12px; line-height:1.4; margin:0; }
  .phase-summary { grid-column:1/-1; grid-row:2; gap:8px; padding:0; }
  .moon-graphic { width:26px; height:26px; }
@@ -278,10 +277,6 @@ dialog .method { margin-top:16px; }
 .location-map .leaflet-bar a { background:var(--bg); color:var(--text); border-color:var(--line); width:26px; height:26px; line-height:26px; }
 .location-map .leaflet-bar a:hover { background:var(--hover); }
 .location-pin { background:var(--accent); border:2px solid var(--bg); border-radius:50%; box-shadow:0 0 0 2px var(--text); }
-.location-options { margin-top:12px; }
-.location-options summary { font-size:10px; }
-.location-options summary span { color:var(--muted); opacity:.7; }
-#location-dialog .location-options input { width:110px; margin-top:8px; }
 @media (max-height:650px) {
  #location-dialog { padding:16px; }
  .location-map { height:130px; }
@@ -312,4 +307,121 @@ dialog .method { margin-top:16px; }
  .legend>span { gap:3px; }
  .legend>.project-links { gap:8px; }
  .swatch { width:4px; height:4px; }
+}
+
+.no-window-reason { color:var(--muted); line-height:1.5; }
+
+/* A selected week leaves room for the timeline on short viewports. */
+.week-view .page { max-width:1200px; padding:12px 16px; }
+.week-view .toolbar { margin-bottom:12px; }
+.week-view .planning-layout { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:20px; flex:0 0 220px; height:220px; }
+.week-view .calendar-section { flex:none; height:134px; max-height:none; }
+.week-view .calendar-heading { flex-direction:row; align-items:center; flex-wrap:nowrap; min-height:28px; margin-bottom:8px; gap:6px; }
+.week-view .calendar-heading h1 { font-size:12px; }
+.week-view .month-nav { width:auto; gap:2px; }
+.week-view .month-nav>span { min-width:0; font-size:9px; white-space:nowrap; }
+.week-view .icon-button { width:26px; height:28px; }
+.week-view .weekdays { font-size:8px; margin-bottom:5px; }
+.week-view .calendar-day { padding:3px; gap:3px; }
+.week-view .mini-moon { width:14px; height:14px; }
+.week-view .day-period { font-size:8px; }
+.week-view .day-periods { min-height:22px; }
+.week-view .night-card { align-self:start; flex:none; height:220px; padding:8px 0 0 16px; border:0; border-left:1px solid var(--line); display:grid; grid-template-columns:minmax(0,1fr) auto; grid-template-rows:32px 30px 48px minmax(0,1fr); gap:6px 10px; }
+.week-view .night-card h2 { grid-column:1; grid-row:1; font-size:12px; line-height:1.4; margin:0; }
+.week-view .phase-summary { grid-column:1/-1; grid-row:2; gap:8px; padding:0; }
+.week-view .moon-graphic { width:24px; height:24px; }
+.week-view .phase-summary h3 { font-size:9px; line-height:1.3; }
+.week-view .phase-summary .muted { font-size:7px; line-height:1.4; margin:0; }
+.week-view .window-summary { display:contents; }
+.week-view .window-summary .small-label { display:none; }
+.week-view .big-duration { grid-column:2; grid-row:1; font-size:22px; margin:0; white-space:nowrap; align-self:center; }
+.week-view .big-duration small { font-size:10px; }
+.week-view .window-times { grid-column:1/-1; grid-row:3; min-height:0; font-size:8px; line-height:1.4; gap:4px 10px; }
+.week-view .window-period { font-size:8px; }
+.week-view .observing-window { gap:1px; }
+.week-view .night-timeline { grid-column:1/-1; grid-row:4; padding:5px 0 0; margin:0; }
+.week-view .timeline-heading { margin-bottom:3px; }
+.week-view .timeline-heading h3 { font-size:8px; line-height:1.3; }
+.week-view #timeline-period { font-size:6px; }
+.week-view .timeline { grid-template-columns:24px 1fr; gap:2px 6px; }
+.week-view .track { height:4px; }
+.week-view .track-label { font-size:6px; line-height:1; }
+.week-view .timeline-ticks { height:8px; }
+.week-view .timeline-tick { font-size:6px; line-height:1.2; }
+.week-view .legend { margin-top:3px; gap:3px 8px; }
+.week-view .legend>span,.week-view .legend a { font-size:6px; line-height:1.2; }
+.week-view .legend>span { gap:3px; }
+.week-view .legend>.project-links { gap:8px; }
+.week-view .swatch { width:4px; height:4px; }
+@media (max-width:559px) {
+ .week-view .planning-layout { display:flex; flex-direction:column; height:294px; flex-basis:294px; gap:8px; }
+ .week-view .calendar-section { height:108px; }
+ .week-view .night-card { align-self:stretch; height:178px; padding:8px 0 0; border-left:0; border-top:1px solid var(--line); grid-template-rows:20px 24px 48px minmax(0,1fr); gap:4px 10px; }
+ .week-view .calendar-heading h1 { font-size:11px; }
+ .week-view .month-nav>span { font-size:8px; }
+}
+@media (max-width:559px) and (max-height:339px) {
+ .week-view .page { padding:10px 12px; }
+ .week-view .toolbar { margin-bottom:10px; }
+ .week-view .planning-layout { height:244px; flex-basis:244px; gap:6px; }
+ .week-view .calendar-section { height:84px; }
+ .week-view .calendar-heading { margin-bottom:4px; }
+ .week-view .weekdays { font-size:7px; margin-bottom:3px; }
+ .week-view .calendar-day { padding:1px; gap:1px; }
+ .week-view .mini-moon { width:12px; height:12px; }
+ .week-view .night-card { height:154px; padding-top:6px; grid-template-rows:16px 22px 36px minmax(0,1fr); gap:3px 10px; }
+ .week-view .night-card h2 { font-size:11px; }
+ .week-view .big-duration { font-size:18px; }
+ .week-view .big-duration small { font-size:9px; }
+ .week-view .moon-graphic { width:20px; height:20px; }
+ .week-view .phase-summary h3 { font-size:8px; }
+}
+@media (max-height:299px) {
+ .week-view .page { padding:8px 12px; }
+ .week-view .toolbar { margin-bottom:8px; }
+ .week-view .planning-layout { height:200px; flex-basis:200px; }
+ .week-view .night-card { height:200px; grid-template-rows:30px 26px 44px minmax(0,1fr); }
+}
+@media (max-width:559px) and (max-height:299px) {
+ .week-view .planning-layout { height:204px; flex-basis:204px; gap:6px; }
+ .week-view .calendar-section { height:70px; }
+ .week-view .calendar-heading { min-height:22px; margin-bottom:2px; }
+ .week-view .icon-button { height:22px; }
+ .week-view .weekdays { line-height:1; margin-bottom:1px; }
+ .week-view .night-card { height:128px; padding-top:4px; grid-template-rows:16px 0 36px minmax(0,1fr); }
+ .week-view .phase-summary { display:none; }
+}
+
+@media (max-height:420px) {
+ #location-dialog { padding:12px; max-height:calc(100dvh - 20px); }
+ #location-dialog .dialog-heading { margin-bottom:6px; }
+ #location-dialog .dialog-heading h2 { font-size:14px; }
+ #location-dialog .icon-button { height:24px; }
+ #location-dialog .city-picker { margin-bottom:6px; }
+ #location-dialog .city-search { padding:6px 8px; font-size:11px; }
+ #location-dialog input { padding:4px 8px; font-size:11px; }
+ #location-dialog label { font-size:9px; margin:6px 0 2px; }
+ #location-dialog .primary-button { padding:6px; margin-top:10px; }
+ #location-dialog .location-map { height:72px; }
+ #location-dialog .input-hint { margin:4px 0 0; font-size:8px; line-height:1.3; }
+ #location-dialog .city-result { padding:6px 8px; }
+}
+@media (max-height:339px) and (max-width:559px) {
+ #location-dialog { padding:10px; }
+ #location-dialog .location-map { height:48px; }
+ #location-dialog .leaflet-bar a { height:20px; line-height:20px; }
+ #location-dialog .leaflet-top .leaflet-control { margin-top:3px; }
+}
+@media (max-height:420px) and (min-width:560px) {
+ #location-dialog { width:650px; }
+ #location-form { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:4px 12px; }
+ #location-dialog .city-picker { grid-column:1/-1; margin:0; }
+ #location-dialog .location-map { grid-column:1; grid-row:2/6; height:100%; }
+ #location-dialog .coordinate-fields { grid-column:2; grid-row:2; }
+ #location-dialog .coordinate-fields label { margin-top:0; }
+ #location-dialog .timezone-label { grid-column:2; grid-row:3; margin:0; }
+ #location-dialog #timezone { grid-column:2; grid-row:4; }
+ #location-dialog .primary-button { grid-column:2; grid-row:5; margin:0; }
+ #location-dialog #map-status { grid-column:1; grid-row:5; z-index:1000; align-self:end; background:var(--bg); padding:3px; margin:0; }
+ #location-dialog #location-error { grid-column:1/-1; }
 }

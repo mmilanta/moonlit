@@ -39,7 +39,6 @@ class LocationPicker {
     this.el('auto-timezone').addEventListener('click',()=>{
       this.manualZone=false; this.inferZone();
     });
-    this.el('elevation').addEventListener('input',()=>this.manualElevation=true);
     this.el('close-location').addEventListener('click',()=>this.dialog.close());
     this.dialog.addEventListener('click',event=>{
       if(!this.el('city-picker').contains(event.target)) this.el('city-results').hidden=true;
@@ -59,9 +58,7 @@ class LocationPicker {
   open(site,id) {
     this.draft={...site}; this.draftId=id;
     this.manualZone=!!site.zoneManual;
-    this.manualElevation=id==='custom' && site.elevationSource!=='sea-level fallback';
     this.el('location-error').hidden=true;
-    this.el('location-options').open=false;
     this.fillFields();
     this.el('city-results').hidden=true;
     this.dialog.showModal();
@@ -76,7 +73,6 @@ class LocationPicker {
     this.el('city-search').setCustomValidity('');
     this.el('latitude').value=this.draft.lat;
     this.el('longitude').value=this.draft.lon;
-    this.el('elevation').value=this.draft.elevation;
     this.el('timezone').value=this.draft.zone;
     this.el('timezone').setCustomValidity('');
     this.zoneStatus();
@@ -99,7 +95,7 @@ class LocationPicker {
   chooseCity(id) {
     if(!this.presets[id]) return;
     this.draft={...this.presets[id]}; this.draftId=id;
-    this.manualZone=false; this.manualElevation=false;
+    this.manualZone=false;
     this.el('location-error').hidden=true;
     this.fillFields(); this.el('city-results').hidden=true;
     this.moveMarker(10);
@@ -145,10 +141,8 @@ class LocationPicker {
     this.draft.name=`${lat.toFixed(4)}°, ${lon.toFixed(4)}°`; this.draftId='custom';
     this.el('city-search').value='';
     this.el('city-search').setCustomValidity('');
-    if(!this.manualElevation) {
-      this.draft.elevation=0; this.el('elevation').value=0;
-      this.draft.elevationSource='sea-level fallback';
-    }
+    this.draft.elevation=0;
+    this.draft.elevationSource='sea-level fallback';
     if(!this.manualZone) this.inferZone();
     this.marker.setLatLng([lat,lon]);
     if(recenter) this.map.setView([lat,lon],this.map.getZoom(),{animate:false});
@@ -187,9 +181,8 @@ class LocationPicker {
       this.el('timezone').reportValidity(); return;
     }
     const next={...this.draft,lat:this.el('latitude').valueAsNumber,lon:this.el('longitude').valueAsNumber,
-      elevation:this.el('elevation').valueAsNumber,zone,zoneManual:this.manualZone};
-    if(this.manualElevation) delete next.elevationSource;
-    const id=this.manualZone||this.manualElevation?'custom':this.draftId;
+      zone,zoneManual:this.manualZone};
+    const id=this.manualZone?'custom':this.draftId;
     this.onApply(next,id); this.dialog.close();
   }
 }

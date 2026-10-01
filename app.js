@@ -14,7 +14,7 @@ let site = { ...presets.zurich }, locationId = 'zurich';
 try {
   const saved = JSON.parse(localStorage.getItem('moonlit-site'));
   if (saved && validSite(saved.site)) {
-    site = presets[saved.id] ? {...presets[saved.id]} : saved.site;
+    site = presets[saved.id] ? {...presets[saved.id]} : withAutomaticElevation(saved.site);
     locationId = presets[saved.id] ? saved.id : 'custom';
   }
 } catch { /* The page also works when browser storage is unavailable. */ }
@@ -22,12 +22,17 @@ let selected = N.dateKey(new Date(), site.zone);
 if (selected < '1900-01-01' || selected > '2100-12-30') selected = '2026-09-29';
 let month = selected.slice(0,7), moonId = 0;
 const cache = new Map();
+const weekViewQuery = window.matchMedia('(max-width:700px) and (max-height:639px), (min-width:701px) and (max-height:519px)');
 
 function validSite(value) {
   if (!value || typeof value.name !== 'string' || !value.name.trim() || value.name.length > 80) return false;
-  if (![value.lat,value.lon,value.elevation].every(Number.isFinite)
-    || Math.abs(value.lat)>90 || Math.abs(value.lon)>180 || value.elevation < -500 || value.elevation > 10000) return false;
+  if (![value.lat,value.lon].every(Number.isFinite)
+    || Math.abs(value.lat)>90 || Math.abs(value.lon)>180) return false;
   try { new Intl.DateTimeFormat('en',{timeZone:value.zone}).format(); return typeof value.zone === 'string'; } catch { return false; }
+}
+function withAutomaticElevation(value) {
+  const city=Object.values(presets).find(city=>city.lat===value.lat&&city.lon===value.lon);
+  return {...value,elevation:city?city.elevation:0,elevationSource:city?(city.elevationSource||'city estimate'):'sea-level fallback'};
 }
 function night(key) {
   if (!cache.has(key)) cache.set(key,N.calculateNight(key,site));
@@ -87,12 +92,9 @@ function renderDetails(data) {
       const ranges=period.windows.map(([a,b])=>`<span>${timeHTML(a,selected)} <span aria-label="to">–</span> ${timeHTML(b,selected)}</span>`).join('');
       return `<div class="observing-window ${period.id}"><span class="window-period">${periodIndicator(period)} ${period.label}<span class="window-duration">${durationText(period.duration)}</span></span>${ranges}</div>`;
     }).join('')
-    : '<span>No moon-free dark window this night.</span>';
-  $('window-explanation').textContent=data.windows.length>1 ? `${data.windows.length} separate windows. Total time shown above.`
-    : periods[0]?.id==='full-night' ? 'Moon-free darkness from dusk to dawn.'
-    : data.total>0 ? 'Fully dark sky. Moon below the horizon.'
-    : !data.dark.length ? 'The Sun does not reach 18° below the horizon.'
-    : 'The Moon is above the horizon throughout astronomical darkness.';
+    : `<span class="no-window-reason">${!data.dark.length
+      ? 'No astronomical darkness: the Sun stays above −18°.'
+      : 'The Moon stays above the horizon throughout astronomical darkness.'}</span>`;
   $('moon-graphic').innerHTML=moonSVG(data.phase,data.illumination,true);
   $('moon-phase').textContent=data.phaseName;
   $('moon-illumination').textContent=`${Math.round(data.illumination*100)}% illuminated · ${data.phase<180?'waxing':'waning'}`;
@@ -106,19 +108,33 @@ function renderDetails(data) {
 }
 
 function renderCalendar() {
+  const weekView=weekViewQuery.matches;
+  document.documentElement.classList.toggle('week-view',weekView);
+  if(weekView) month=selected.slice(0,7);
   const [year,m]=month.split('-').map(Number);
   const first=`${month}-01`, weekday=(new Date(`${first}T12:00:00Z`).getUTCDay()+6)%7;
   const days=new Date(Date.UTC(year,m,0)).getUTCDate();
-  const cells=Math.ceil((weekday+days)/7)*7;
+  const selectedWeekday=(new Date(`${selected}T12:00:00Z`).getUTCDay()+6)%7;
+  const weekStart=N.addDays(selected,-selectedWeekday), weekEnd=N.addDays(weekStart,6);
+  const calendarStart=weekView?weekStart:N.addDays(first,-weekday);
+  const cells=weekView?7:Math.ceil((weekday+days)/7)*7;
   const today=N.dateKey(new Date(),site.zone);
-  $('month-label').textContent=civilLabel(first,{month:'long',year:'numeric'});
-  $('previous-month').disabled=month<='1900-01';
-  $('next-month').disabled=month>='2100-12';
+  $('month-label').textContent=weekView
+    ? `${weekStart.slice(0,7)===weekEnd.slice(0,7)?Number(weekStart.slice(8)):civilLabel(weekStart,{day:'numeric',month:'short'})}–${civilLabel(weekEnd,{day:'numeric',month:'short',year:'numeric'})}`
+    : civilLabel(first,{month:'long',year:'numeric'});
+  $('month-label').setAttribute('aria-label',weekView
+    ? `Week from ${civilLabel(weekStart,{day:'numeric',month:'long',year:'numeric'})} to ${civilLabel(weekEnd,{day:'numeric',month:'long',year:'numeric'})}`
+    : $('month-label').textContent);
+  $('previous-month').disabled=weekView?weekStart<='1900-01-01':month<='1900-01';
+  $('next-month').disabled=weekView?weekEnd>='2100-12-30':month>='2100-12';
+  $('previous-month').setAttribute('aria-label',weekView?'Previous week':'Previous month');
+  $('next-month').setAttribute('aria-label',weekView?'Next week':'Next month');
+  $('calendar').setAttribute('aria-label',`Choose an observing night in this ${weekView?'week':'month'}`);
   let html='';
   for(let i=0;i<cells;i++) {
-    const key=N.addDays(first,i-weekday), outside=key.slice(0,7)!==month;
+    const key=N.addDays(calendarStart,i), outside=!weekView&&key.slice(0,7)!==month;
     const number=Number(key.slice(8));
-    if (outside || key>'2100-12-30') {
+    if (outside || key<'1900-01-01' || key>'2100-12-30') {
       html+=`<div class="calendar-day outside" aria-hidden="true"><span class="day-number">${number}</span></div>`;
       continue;
     }
@@ -161,11 +177,13 @@ function render(includeCalendar=true) {
 
 function selectNight(key) {
   if(!/^\d{4}-\d{2}-\d{2}$/.test(key)||key<'1900-01-01'||key>'2100-12-30') return;
-  const changedMonth=key.slice(0,7)!==month;
-  selected=key; month=key.slice(0,7); render(changedMonth);
+  const changedCalendar=weekViewQuery.matches
+    ? !$('calendar').querySelector(`[data-date="${key}"]`)
+    : key.slice(0,7)!==month;
+  selected=key; month=key.slice(0,7); render(changedCalendar);
 }
 function setSite(next,id) {
-  site=next; locationId=id; cache.clear();
+  site=withAutomaticElevation(next); locationId=id; cache.clear();
   try { localStorage.setItem('moonlit-site',JSON.stringify({site,id})); } catch {}
   render();
 }
@@ -181,9 +199,15 @@ $('date').addEventListener('change',()=>{
 $('today').addEventListener('click',()=>selectNight(N.dateKey(new Date(),site.zone)));
 for(const [id,delta] of [['previous-month',-1],['next-month',1]]) {
   $(id).addEventListener('click',()=>{
+    if(weekViewQuery.matches) {
+      const key=N.addDays(selected,delta*7);
+      selectNight(key<'1900-01-01'?'1900-01-01':key>'2100-12-30'?'2100-12-30':key);
+      return;
+    }
     const d=new Date(`${month}-01T12:00:00Z`); d.setUTCMonth(d.getUTCMonth()+delta);
     month=d.toISOString().slice(0,7); renderCalendar();
   });
 }
 $('edit-location').addEventListener('click',editLocation);
+weekViewQuery.addEventListener('change',()=>renderCalendar());
 render();
